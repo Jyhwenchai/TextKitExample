@@ -18,6 +18,10 @@
 		667A6DBE24D804A100410D10 /* EditorTextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DBD24D804A100410D10 /* EditorTextStorage.swift */; };
 		667A6DC024D80CEC00410D10 /* TextEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DBF24D80CEC00410D10 /* TextEditorViewController.swift */; };
 		667A6DC524D9047B00410D10 /* ExclusionPathViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DC424D9047B00410D10 /* ExclusionPathViewController.swift */; };
+		667A6DCC24DA44B900410D10 /* MarkdownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DCB24DA44B900410D10 /* MarkdownViewController.swift */; };
+		667A6DCE24DA45D000410D10 /* MarkdownStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DCD24DA45D000410D10 /* MarkdownStorage.swift */; };
+		667A6DD224DA937900410D10 /* MarkdownStyleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DD124DA937900410D10 /* MarkdownStyleBar.swift */; };
+		667A6DD424DA955C00410D10 /* MarkdownStyleBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DD324DA955C00410D10 /* MarkdownStyleBarItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +38,10 @@
 		667A6DBD24D804A100410D10 /* EditorTextStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorTextStorage.swift; sourceTree = "<group>"; };
 		667A6DBF24D80CEC00410D10 /* TextEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextEditorViewController.swift; sourceTree = "<group>"; };
 		667A6DC424D9047B00410D10 /* ExclusionPathViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExclusionPathViewController.swift; sourceTree = "<group>"; };
+		667A6DCB24DA44B900410D10 /* MarkdownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownViewController.swift; sourceTree = "<group>"; };
+		667A6DCD24DA45D000410D10 /* MarkdownStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStorage.swift; sourceTree = "<group>"; };
+		667A6DD124DA937900410D10 /* MarkdownStyleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStyleBar.swift; sourceTree = "<group>"; };
+		667A6DD324DA955C00410D10 /* MarkdownStyleBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStyleBarItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +118,10 @@
 		667A6DC824D94B6500410D10 /* 4. MarkDown */ = {
 			isa = PBXGroup;
 			children = (
+				667A6DCB24DA44B900410D10 /* MarkdownViewController.swift */,
+				667A6DCD24DA45D000410D10 /* MarkdownStorage.swift */,
+				667A6DD124DA937900410D10 /* MarkdownStyleBar.swift */,
+				667A6DD324DA955C00410D10 /* MarkdownStyleBarItem.swift */,
 			);
 			path = "4. MarkDown";
 			sourceTree = "<group>";
@@ -185,12 +197,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				667A6DA824D7EDF200410D10 /* ViewController.swift in Sources */,
+				667A6DD424DA955C00410D10 /* MarkdownStyleBarItem.swift in Sources */,
 				667A6DA424D7EDF200410D10 /* AppDelegate.swift in Sources */,
+				667A6DCC24DA44B900410D10 /* MarkdownViewController.swift in Sources */,
 				667A6DC024D80CEC00410D10 /* TextEditorViewController.swift in Sources */,
 				667A6DA624D7EDF200410D10 /* SceneDelegate.swift in Sources */,
 				667A6DBE24D804A100410D10 /* EditorTextStorage.swift in Sources */,
+				667A6DD224DA937900410D10 /* MarkdownStyleBar.swift in Sources */,
 				667A6DB924D7F61900410D10 /* LabelActionViewController.swift in Sources */,
 				667A6DC524D9047B00410D10 /* ExclusionPathViewController.swift in Sources */,
+				667A6DCE24DA45D000410D10 /* MarkdownStorage.swift in Sources */,
 				667A6DBB24D7F62400410D10 /* ActionLabel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

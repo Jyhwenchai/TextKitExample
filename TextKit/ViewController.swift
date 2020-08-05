@@ -12,10 +12,11 @@ class ViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        let attributedString = NSMutableAttributedString()
-        attributedString.replaceCharacters(in: NSRange(), with: "hello, world")
-        attributedString.replaceCharacters(in: NSRange(location: 0, length: 3), with: NSAttributedString(string: "hello, world!"))
-        print(attributedString)
+        let string = "hello, world\ndidadia,aaa" as NSString
+        let range = NSRange(location: 10, length: 6)
+        
+        let lineRange = string.lineRange(for: range)
+        print(lineRange)
     }
 
 
