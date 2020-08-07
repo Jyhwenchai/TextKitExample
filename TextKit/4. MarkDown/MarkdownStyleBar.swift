@@ -83,4 +83,21 @@ class MarkdownStyleBar: UIView {
         }
         selectionHandler?(indexes)
     }
+    
+    func updateStyleItem(at index: Int, selected: Bool) {
+        if index < 0 {
+            return
+        }
+        items[index].selected = selected
+        let itemViews = subviews as! [MarkdownStyleItemView]
+        itemViews[index].selected = selected
+    }
+    
+    func resetStyleToNoneSelect() {
+        for index in 0..<items.count {
+            items[index].selected = false
+        }
+        let itemViews = subviews as! [MarkdownStyleItemView]
+        itemViews.forEach { $0.selected = false }
+    }
 }

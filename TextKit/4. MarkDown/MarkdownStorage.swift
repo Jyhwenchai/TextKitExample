@@ -13,6 +13,8 @@ class MarkdownStorage: NSTextStorage {
     var selectedStyles: [Style] = [.normal]
     var selectedRange: NSRange = NSRange()
     var lastEditedLength: Int = 0
+    var seperatorStringStyleDictionary: [NSRange: [Style]] = [:]
+    
     
     struct Style: OptionSet {
         var rawValue: Int
@@ -59,7 +61,28 @@ extension MarkdownStorage {
         var applyRange = selectedRange
         applyRange.length = editedRange.location + editedRange.length - selectedRange.location
         replaceEditorRange(applyRange)
+//        updateSeperatorStringStyle(with: applyRange)
+        
         super.processEditing()
+    }
+    
+    func updateSeperatorStringStyle(with range: NSRange) {
+        
+        let copydicts = seperatorStringStyleDictionary
+        var replaced = false
+    
+        for key in copydicts.keys where range.contains(key.location + key.length - 1) {
+            seperatorStringStyleDictionary[key] = nil
+            seperatorStringStyleDictionary[range] = selectedStyles
+            replaced = true
+        }
+        
+        if !replaced {
+            seperatorStringStyleDictionary[range] = selectedStyles
+        }
+        
+        print(seperatorStringStyleDictionary)
+
     }
     
     private func replaceEditorRange(_ changeRange: NSRange) {

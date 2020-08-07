@@ -13,10 +13,11 @@ class ViewController: UITableViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         let string = "hello, world\ndidadia,aaa" as NSString
-        let range = NSRange(location: 10, length: 6)
+        let range = NSRange(location: 0, length: 6)
         
         let lineRange = string.lineRange(for: range)
         print(lineRange)
+
     }
 
 
