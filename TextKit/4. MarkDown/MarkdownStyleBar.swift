@@ -22,6 +22,8 @@ class MarkdownStyleBar: UIView {
     }
     
     var isMultipleSelection: Bool = false
+    var isSelectionHighlight: Bool = true
+    
     
     var items: [Item] = []
     
@@ -60,6 +62,12 @@ class MarkdownStyleBar: UIView {
     
     @objc func markdownStyleItemAction(gesture: UITapGestureRecognizer) {
         guard let styleView = gesture.view as? MarkdownStyleItemView else { return }
+        
+        if !isSelectionHighlight {
+            selectionHandler?([styleView.tag])
+            return
+        }
+        
         styleView.selected.toggle()
         if !isMultipleSelection {
             let newItems = items.map { item -> Item in
@@ -73,6 +81,7 @@ class MarkdownStyleBar: UIView {
         var item = items[styleView.tag]
         item.selected.toggle()
         items[styleView.tag] = item
+        updateStyleItems()
         completeAction()
     }
     
@@ -99,5 +108,12 @@ class MarkdownStyleBar: UIView {
         }
         let itemViews = subviews as! [MarkdownStyleItemView]
         itemViews.forEach { $0.selected = false }
+    }
+    
+    func updateStyleItems() {
+        let itemViews = subviews as! [MarkdownStyleItemView]
+        for (index, item) in items.enumerated() {
+            itemViews[index].selected = item.selected
+        }
     }
 }

@@ -15,6 +15,7 @@ class MarkdownStorage: NSTextStorage {
     var lastEditedLength: Int = 0
     var seperatorStringStyleDictionary: [NSRange: [Style]] = [:]
     
+    var editFont: UIFont = UIFont.systemFont(ofSize: 23)
     
     struct Style: OptionSet {
         var rawValue: Int
@@ -47,6 +48,13 @@ extension MarkdownStorage {
         endEditing()
     }
     
+    override func replaceCharacters(in range: NSRange, with attrString: NSAttributedString) {
+        beginEditing()
+        storeAttributedString.replaceCharacters(in: range, with: attrString)
+        edited(.editedCharacters, range: range, changeInLength: attrString.length - range.length)
+        endEditing()
+    }
+    
     override func setAttributes(_ attrs: [NSAttributedString.Key : Any]?, range: NSRange) {
         beginEditing()
         storeAttributedString.setAttributes(attrs, range: range)
@@ -61,7 +69,6 @@ extension MarkdownStorage {
         var applyRange = selectedRange
         applyRange.length = editedRange.location + editedRange.length - selectedRange.location
         replaceEditorRange(applyRange)
-//        updateSeperatorStringStyle(with: applyRange)
         
         super.processEditing()
     }
@@ -90,7 +97,7 @@ extension MarkdownStorage {
         resetNormalStyle(with: changeRange)
         
         selectedStyles.forEach {
-            addAttributes($0.attributes, range: changeRange)
+            addAttributes($0.attributes(with: editFont), range: changeRange)
         }
     }
     
@@ -100,13 +107,11 @@ extension MarkdownStorage {
 }
 
 extension MarkdownStorage.Style {
-    var attributes: [NSAttributedString.Key: Any] {
+    
+    func attributes(with font: UIFont) -> [NSAttributedString.Key: Any] {
+        let scriptFont = font
+        let bodyFontDescriptor = scriptFont.fontDescriptor
         
-        let bodyFontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body)
-        let scriptFontDescriptor = UIFontDescriptor(fontAttributes: [.family: "PingFang SC"])
-        let boldFontSize = bodyFontDescriptor.fontAttributes[.size] as! CGFloat
-        let scriptFont = UIFont(descriptor: scriptFontDescriptor, size: boldFontSize)
-         
         switch self {
         case .bold:
             let boldDescriptor = bodyFontDescriptor.withSymbolicTraits(.traitBold)
@@ -128,6 +133,37 @@ extension MarkdownStorage.Style {
         default: return [.font: scriptFont]
         }
     }
+    
+//    var attributes: [NSAttributedString.Key: Any]  {
+//
+////        let bodyFontDescriptor = UIFontDescriptor.preferredFontDescriptor(withTextStyle: .body)
+////        let fontSize = bodyFontDescriptor.fontAttributes[.size] as! CGFloat
+////        let scriptFont = UIFont(descriptor: bodyFontDescriptor, size: fontSize)
+//
+//        let scriptFont = MarkdownStorage.editFont
+//        let bodyFontDescriptor = scriptFont.fontDescriptor
+//
+//        switch self {
+//        case .bold:
+//            let boldDescriptor = bodyFontDescriptor.withSymbolicTraits(.traitBold)
+//            // size值为0，会迫使UIFont返回用户设置的字体大小。
+//            let fontBold = UIFont(descriptor: boldDescriptor!, size: 0.0)
+//            return [.font: fontBold]
+//        case .italic:
+//            let italicDescriptor = bodyFontDescriptor.withSymbolicTraits(.traitItalic)
+//            let fontItalic = UIFont(descriptor: italicDescriptor!, size: 0.0)
+//            return [.font: fontItalic]
+//        case [.bold, .italic]:
+//            let italicDescriptor = bodyFontDescriptor.withSymbolicTraits([.traitItalic, .traitBold])
+//            let fontItalic = UIFont(descriptor: italicDescriptor!, size: 0.0)
+//            return [.font: fontItalic]
+//        case .underline:
+//            return [.underlineStyle: 2, .underlineColor: UIColor.systemBlue]
+//        case .strike:
+//            return [.strikethroughStyle: 2, .strikethroughColor: UIColor.red]
+//        default: return [.font: scriptFont]
+//        }
+//    }
 }
 
 extension MarkdownStorage {
@@ -141,7 +177,7 @@ extension MarkdownStorage {
     
     func resetNormalStyle(with range: NSRange) {
         removeAllStyle(with: range)
-        addAttributes(MarkdownStorage.Style.normal.attributes, range: range)
+        addAttributes(MarkdownStorage.Style.normal.attributes(with: editFont), range: range)
     }
     
     func clearBoldStyle(with range: NSRange) {

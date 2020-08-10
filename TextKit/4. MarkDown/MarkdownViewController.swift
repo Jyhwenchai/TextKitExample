@@ -7,30 +7,16 @@
 
 import UIKit
 
-extension MarkdownStorage.Style {
-    static var segmentItemNames: [String] {
-        return ["Normal", "Bold", "Italic", "Underline", "Strike"]
-    }
-}
-
 class MarkdownViewController: UIViewController {
 
     var lastSelectedRange = NSRange()
-
-    private var styleItems: [MarkdownStyleBar.Item] = [
-        MarkdownStyleBar.Item(UIImage(systemName: "bold")!),
-        MarkdownStyleBar.Item(UIImage(systemName: "italic")!),
-        MarkdownStyleBar.Item(UIImage(systemName: "underline")!),
-        MarkdownStyleBar.Item(UIImage(systemName: "strikethrough")!)
-    ]
     
-    lazy var markdonwStyleBar: MarkdownStyleBar = {
-        let bar = MarkdownStyleBar(styleItems)
-        bar.isMultipleSelection = true
-        bar.layer.cornerRadius = 5.0
-        bar.backgroundColor = UIColor.systemGray5
-        return bar
-    }()
+    var exclusionRects: [CGRect] = []
+    
+    let exclusionManager = ExclusionManager()
+    
+    
+    lazy var styleBarGroupView: MarkdownStyleBarGroupView = MarkdownStyleBarGroupView(frame: CGRect(x: 10, y: 350, width: view.bounds.width - 20, height: 45))
     
     
     lazy var textView: UITextView = {
@@ -39,46 +25,111 @@ class MarkdownViewController: UIViewController {
         textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
         textView.delegate = self
         textView.isUserInteractionEnabled = true
+        textView.becomeFirstResponder()
+        textView.font = textStorage.editFont
         return textView
     }()
     
-    let layouManager = NSLayoutManager()
+    let layoutManager = NSLayoutManager()
     let textStorage: MarkdownStorage = MarkdownStorage()
     let textContainer = NSTextContainer()
     
     var tapLocationHasText = false
     
     
+    @IBOutlet weak var sbTextView: UITextView!
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        textStorage.addLayoutManager(layouManager)
-        layouManager.addTextContainer(textContainer)
+        textStorage.addLayoutManager(layoutManager)
+        layoutManager.addTextContainer(textContainer)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(textViewTapGesture(sender:)))
         tapGesture.delegate = self
         textView.addGestureRecognizer(tapGesture)
         view.addSubview(textView)
-        
-        markdonwStyleBar.frame = CGRect(x: 10, y: 320, width: view.bounds.width - 20, height: 45)
-        markdonwStyleBar.selectionHandler = { [unowned self] indexes in
+        view.addSubview(styleBarGroupView)
+        textStorage.replaceCharacters(in: NSRange(), with: "")
+        initActions()
+    }
+    
+    func initActions() {
+        styleBarGroupView.fontStyleSelectionHandler = { [unowned self] indexes in
             textStorage.selectedStyles = convertStyles(from: indexes)
             textStorage.selectedRange = textView.selectedRange
             textStorage.update()
         }
-        view.addSubview(markdonwStyleBar)
+        
+        styleBarGroupView.imageStyleSelectionHandler = { [self] in
+            
+            let image = UIImage(named: "img")!
+            let width = textView.bounds.width - textView.textContainerInset.left - textView.textContainerInset.right - 10
+            let scaleFactor = image.size.width / width
+            let newImage = UIImage(cgImage: image.cgImage!, scale: scaleFactor, orientation: .up)
+            let attachment = NSTextAttachment(image: newImage)
+    
+    
+            let string = "\n"
+            let wrapLineAttributedString = NSAttributedString(string: string)
+
+            let mutableString = NSMutableAttributedString()
+            mutableString.append(wrapLineAttributedString)
+            mutableString.append(NSAttributedString(attachment: attachment))
+            mutableString.append(wrapLineAttributedString)
+
+    
+            textStorage.replaceCharacters(in: textView.selectedRange, with: mutableString)
+            let selectedRange = NSRange(location: textView.selectedRange.location + 3, length: 0)
+            textView.selectedRange = selectedRange
+ 
+        }
+        
+        styleBarGroupView.typesettingSelectionHandler = { [self] index in
+
+           
+            
+            if let selectedTextRange = textView.selectedTextRange {
+                
+                let selectionStartRect = textView.caretRect(for: selectedTextRange.start)
+                let selectionEndRect = textView.caretRect(for: selectedTextRange.end)
+                
+                let selectionLocation = CGPoint(x: textView.textContainerInset.left, y: selectionStartRect.minY)
+                let selectionHeight = selectionEndRect.maxY - selectionStartRect.minY
+                
+                let frame = CGRect(origin: selectionLocation, size: CGSize(width: 3, height: selectionHeight))
+                
+                let acrossFrames = exclusionManager.getAcrossFrames(frame)
+                let views = exclusionManager.getAcrossViews(with: acrossFrames)
+                views.forEach { $0.removeFromSuperview()}
+                exclusionManager.removeExclusionView(with: acrossFrames)
+                let noteView = UIView(frame: frame)
+                noteView.backgroundColor = UIColor.systemRed
+                exclusionManager.addExclusionView(noteView)
+                textView.addSubview(noteView)
+             
+               
+                var exclusionPaths: [UIBezierPath] = []
+                
+                exclusionManager.exclusionFrames.forEach {
+                    var frame = $0
+                    frame.origin.x = 0
+                    frame.size.width = 10
+                    let path = UIBezierPath(rect: frame)
+                    exclusionPaths.append(path)
+                }
+                
+                textContainer.exclusionPaths = exclusionPaths
+            }
+        }
     }
     
     
     @objc func textViewTapGesture(sender: UITapGestureRecognizer) {
-        let sentTextView = sender.view as? UITextView
-        if let textView = sentTextView {
+        if let textView = sender.view as? UITextView {
             
-        
             let layoutManager = textView.layoutManager
-            // location of tap in myTextView coordinate
-            var location = sender.location(in: sentTextView)
+            var location = sender.location(in: textView)
             location.x -= textView.textContainerInset.left
             location.y -= textView.textContainerInset.top
    
@@ -115,13 +166,14 @@ extension MarkdownViewController {
     }
 }
 
+// MARK: - 监听 selectedRange 处理对应字体风格
 extension MarkdownViewController: UITextViewDelegate {
     func textViewDidChangeSelection(_ textView: UITextView) {
         
 //        if !tapLocationHasText {
 //            return
 //        }
-        
+        updateTypesettingBarStatus()
         if lastSelectedRange.length > 0
             && textView.selectedRange.length == 0
             && textView.selectedRange.location == textView.text.count {
@@ -163,29 +215,41 @@ extension MarkdownViewController: UITextViewDelegate {
         }
 
         textStorage.selectedStyles = styles
-        updateStyleBar(with: textStorage.selectedStyles)
-//        0000 0000 0000 0000 0000 0000 0000 0000
-//        if let range = singleRange, separatorAttributeStringCount == 1 {
-//            for key in textStorage.seperatorStringStyleDictionary.keys where key.contains(range.location + range.length - 1) {
-//                if let styles = textStorage.seperatorStringStyleDictionary[key] {
-//                    textStorage.selectedStyles = styles
-//                    updateStyleBar(with: textStorage.selectedStyles)
-//                }
-//            }
-//        } else if (separatorAttributeStringCount > 1) {
-//            textStorage.selectedStyles = [.normal]
-//            updateStyleBar(with: textStorage.selectedStyles)
-//        }
+        updateFontStyle(with: textStorage.selectedStyles)
     }
     
-    
-    func updateStyleBar(with styles: [MarkdownStorage.Style]) {
-        markdonwStyleBar.resetStyleToNoneSelect()
+    /// 更新字体风格
+    func updateFontStyle(with styles: [MarkdownStorage.Style]) {
+        styleBarGroupView.fontStyleBar.resetStyleToNoneSelect()
         styles.forEach {
             if $0 == [.bold, .italic] {
-                [0, 1].forEach { markdonwStyleBar.updateStyleItem(at: $0, selected: true) }
+                [0, 1].forEach { styleBarGroupView.fontStyleBar.updateStyleItem(at: $0, selected: true) }
             } else {
-                markdonwStyleBar.updateStyleItem(at: $0.traitsIndex, selected: true)
+                styleBarGroupView.fontStyleBar.updateStyleItem(at: $0.traitsIndex, selected: true)
+            }
+        }
+    }
+    
+    func updateTypesettingBarStatus() {
+        if let selectedTextRange = textView.selectedTextRange {
+            
+            let selectionStartRect = textView.caretRect(for: selectedTextRange.start)
+            let selectionEndRect = textView.caretRect(for: selectedTextRange.end)
+            
+            let selectionLocation = CGPoint(x: textView.textContainerInset.left, y: selectionStartRect.minY)
+            let selectionHeight = selectionEndRect.maxY - selectionStartRect.minY
+            
+            let frame = CGRect(origin: selectionLocation, size: CGSize(width: 3, height: selectionHeight))
+            
+            let acrossFrames = exclusionManager.getAcrossFrames(frame)
+            if acrossFrames.count > 1 || acrossFrames.count == 0 {
+                styleBarGroupView.typesettingBar.updateStyleItem(at: 0, selected: false)
+                return
+            }
+            
+            if acrossFrames.count == 1 {
+                styleBarGroupView.typesettingBar.updateStyleItem(at: 0, selected: true)
+                return
             }
         }
     }

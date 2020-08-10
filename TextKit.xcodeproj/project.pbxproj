@@ -22,6 +22,8 @@
 		667A6DCE24DA45D000410D10 /* MarkdownStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DCD24DA45D000410D10 /* MarkdownStorage.swift */; };
 		667A6DD224DA937900410D10 /* MarkdownStyleBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DD124DA937900410D10 /* MarkdownStyleBar.swift */; };
 		667A6DD424DA955C00410D10 /* MarkdownStyleBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DD324DA955C00410D10 /* MarkdownStyleBarItem.swift */; };
+		667A6DD824DCE5DE00410D10 /* MarkdownStyleBarGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DD724DCE5DE00410D10 /* MarkdownStyleBarGroupView.swift */; };
+		667A6DDC24DD52BF00410D10 /* ExclusionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 667A6DDB24DD52BF00410D10 /* ExclusionManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +44,8 @@
 		667A6DCD24DA45D000410D10 /* MarkdownStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStorage.swift; sourceTree = "<group>"; };
 		667A6DD124DA937900410D10 /* MarkdownStyleBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStyleBar.swift; sourceTree = "<group>"; };
 		667A6DD324DA955C00410D10 /* MarkdownStyleBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStyleBarItem.swift; sourceTree = "<group>"; };
+		667A6DD724DCE5DE00410D10 /* MarkdownStyleBarGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownStyleBarGroupView.swift; sourceTree = "<group>"; };
+		667A6DDB24DD52BF00410D10 /* ExclusionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExclusionManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +126,8 @@
 				667A6DCD24DA45D000410D10 /* MarkdownStorage.swift */,
 				667A6DD124DA937900410D10 /* MarkdownStyleBar.swift */,
 				667A6DD324DA955C00410D10 /* MarkdownStyleBarItem.swift */,
+				667A6DD724DCE5DE00410D10 /* MarkdownStyleBarGroupView.swift */,
+				667A6DDB24DD52BF00410D10 /* ExclusionManager.swift */,
 			);
 			path = "4. MarkDown";
 			sourceTree = "<group>";
@@ -201,10 +207,12 @@
 				667A6DA424D7EDF200410D10 /* AppDelegate.swift in Sources */,
 				667A6DCC24DA44B900410D10 /* MarkdownViewController.swift in Sources */,
 				667A6DC024D80CEC00410D10 /* TextEditorViewController.swift in Sources */,
+				667A6DDC24DD52BF00410D10 /* ExclusionManager.swift in Sources */,
 				667A6DA624D7EDF200410D10 /* SceneDelegate.swift in Sources */,
 				667A6DBE24D804A100410D10 /* EditorTextStorage.swift in Sources */,
 				667A6DD224DA937900410D10 /* MarkdownStyleBar.swift in Sources */,
 				667A6DB924D7F61900410D10 /* LabelActionViewController.swift in Sources */,
+				667A6DD824DCE5DE00410D10 /* MarkdownStyleBarGroupView.swift in Sources */,
 				667A6DC524D9047B00410D10 /* ExclusionPathViewController.swift in Sources */,
 				667A6DCE24DA45D000410D10 /* MarkdownStorage.swift in Sources */,
 				667A6DBB24D7F62400410D10 /* ActionLabel.swift in Sources */,
